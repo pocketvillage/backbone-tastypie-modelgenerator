@@ -4,9 +4,18 @@
 * released under 3 clause BSD 
 */
 
-(function( undefined ) {
+(function (factory) {
+	if (typeof define === 'function' && define.amd) {
+		// An AMD compatible require library is available
+		define(['backbone'], factory);
+	} else {
+		// No require library, assume backbone is available and edit global
+		factory(Backbone);
+	}
+}(function (Backbone) {
 
     Backbone.SchemaUrl = "";
+    Backbone.GeneratedModels = {};
 	Backbone.LoadModelsFromUrl = function(url, models){
 		Backbone.SchemaUrl =url;
 		$.getJSON(Backbone.SchemaUrl , function(data){
@@ -34,13 +43,13 @@
 				}
 			});
             
-            window[_mdl['name']] = Backbone.Model.extend({
+            Backbone.GeneratedModels[_mdl['name']] = Backbone.Model.extend({
 				urlRoot: _mdl['url'],
                 validate:_mdl['validator']
 			});
-			window[_mdl['container_name']] = Backbone.Collection.extend({
+			Backbone.GeneratedModels[_mdl['container_name']] = Backbone.Collection.extend({
 				urlRoot: _mdl['url'], 
-				model: window[_mdl['name']]
+				model: Backbone.GeneratedModels[_mdl['name']]
 			});
 		}
 	}
@@ -77,4 +86,4 @@
 			return "Not valid boolean for attribute "+attribute;
 	}
 
-})();
+}));

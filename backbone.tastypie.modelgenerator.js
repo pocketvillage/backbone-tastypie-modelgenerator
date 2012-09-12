@@ -4,6 +4,19 @@
 * released under 3 clause BSD 
 */
 
+
+if (typeof(String.prototype.startsWith) !== 'function') {
+    String.prototype.startsWith = function (str) {
+        return this.splice(0, str.length) === str;
+    };
+};
+
+if (typeof(String.prototype.endsWith) !== 'function') {
+    String.prototype.endsWith = function (str) {
+        return this.splice(-str.length) === str;
+    };
+};
+
 (function (factory) {
 	if (typeof define === 'function' && define.amd) {
 	// An AMD compatible require library is available
@@ -13,13 +26,12 @@
 	factory(Backbone);
 	}
 }(function (Backbone) {
-	Backbone.SchemaUrl = "";
-	Backbone.GeneratedModels = {};
-	
-	Backbone.LoadModelsFromUrl = function(url, models) {
-		Backbone.SchemaUrl =url;
-		$.getJSON(Backbone.SchemaUrl , function(data) {
-			Backbone.LoadModels(data, models)
+    Backbone.SchemaUrl = "";
+	Backbone.LoadModelsFromUrl = function(url, models){
+		Backbone.SchemaUrl = url;
+		Backbone.BaseUrl = Backbone.SchemaUrl.split('/').splice(0,3).join('/');
+		$.getJSON(Backbone.SchemaUrl, function(data){
+			Backbone.LoadModels(data, models);
 		});
 	}
 	
@@ -27,9 +39,9 @@
 		for (var model in object) {
 			var _mdl = {};
 			_mdl['name'] = Backbone.ModelNameGenerator(model);
-			_mdl['url'] = object[model]['list_endpoint'].slice(0,-1);
+			_mdl['url'] = Backbone.BaseUrl + object[model]['list_endpoint'].slice(0,-1);
 			_mdl['container_name'] = Backbone.ModelNameGenerator(model) + "Container";
-			_mdl['schema'] = object[model]['schema'];
+    		_mdl['schema'] = Backbone.BaseUrl + object[model]['schema'];
 			
 			_mdl['validator'] = {};
 			

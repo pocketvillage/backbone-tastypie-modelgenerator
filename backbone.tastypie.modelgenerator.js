@@ -27,6 +27,8 @@ if (typeof(String.prototype.endsWith) !== 'function') {
 	}
 }(function (Backbone) {
     Backbone.SchemaUrl = "";
+  	Backbone.GeneratedModels = {};
+
 	Backbone.LoadModelsFromUrl = function(url, models){
 		Backbone.SchemaUrl = url;
 		Backbone.BaseUrl = Backbone.SchemaUrl.split('/').splice(0,3).join('/');
